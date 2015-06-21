@@ -1,0 +1,6 @@
+#
+# No audio files in the repository.
+#
+songs/
+.sass-cache/
+_bk/

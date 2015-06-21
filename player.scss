@@ -1,0 +1,63 @@
+$bg: #333;
+$fg: #f9f9f9;
+$max-width-small: 799px;
+$min-width-large: 800px;
+
+
+/**
+ * Basic styling and reset.
+ */
+.cf:after, .cf:before {
+  display: block;
+  content: '';
+  clear: both;
+}
+
+ul {
+  list-style: outside none none;
+  margin: 0;
+  padding: 0;
+}
+
+#player {
+  background-color: $bg;
+  color: $fg;
+  position: relative;
+}
+#player {
+  .playlist {
+    background-color: #444;
+  }
+}
+
+
+
+@mixin mediq-query-small($width) {
+  @media screen and (max-width: $max-width-small) {
+    @content;
+  }
+}
+
+@mixin media-query-large($width) {
+  @media screen and (min-width: $min-width-large) {
+    @content;
+  }
+}
+
+
+@media screen and (max-width: $max-width-small) {
+  #player {
+    .ctrl {
+    }
+  }
+}
+
+@media screen and (min-width: $min-width-large) {
+  #player {
+    width: 500px;
+    .ctrl {
+      width: 50px;
+      float: left;
+    }
+  }
+}

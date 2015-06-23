@@ -153,7 +153,7 @@ var loadCss = function loadCss(paths) {
 
     paths.forEach(function(strHref) {
         var e = createNode('link');
-        e.href= strHref;
+        e.href= strHref + '?' + new Date().getTime();
         e.type = 'text/css';
         e.rel = 'stylesheet';
         byTagName('head')[0].appendChild(e);

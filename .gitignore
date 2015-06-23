@@ -2,5 +2,19 @@
 # No audio files in the repository.
 #
 songs/
-.sass-cache/
+
+#
+# Some files that one might want to keep around locally.
+#
 _bk/
+
+#
+# This is only useful localy.
+#
+.sass-cache/
+*.css.map
+
+#
+# Only .scss files are commited.
+#
+*.css

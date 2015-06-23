@@ -55,9 +55,34 @@ ul {
 @media screen and (min-width: $min-width-large) {
   #player {
     width: 500px;
-    .ctrl {
+    .controls-wrapper {
+      position: relative;
+    }
+    .play-pause {
       width: 50px;
-      float: left;
+      cursor: pointer;
+    }
+    .play-pause, .gutter{
+      display: inline-block;
+      white-space: nowrap;
+      height: 20px;
+    }
+    .gutter {
+      width: 300px;
+      position: absolute;
+      background-color: #999;
+      left: 60px;
+      right: 50px;
+
+      .handler {
+        position: absolute;
+        background-color: darkblue;
+        height: 20px;
+      }
+    }
+    .time-remaining {
+      left: 370px;
+      position: absolute;
     }
   }
 }

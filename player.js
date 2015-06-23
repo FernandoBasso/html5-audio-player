@@ -12,10 +12,10 @@ var player = (function() {
     var _self = {
         dnWrapper: undefined,
         dnAudio: undefined,
-        dnPrev: undefined,
-        dnNext: undefined,
-        dnPlay: undefined,
-        dnPause: undefined
+        dnHandler: undefined,
+        dnPlayPause: undefined,
+        dnPause: undefined,
+        dnTimeRemaining: undefined
     };
 
     var conf;
@@ -47,10 +47,36 @@ var player = (function() {
 
     var initControls = function initControls() {
         _self.dnAudio = byId('audio');
-        _self.dnPrev = byId('prev');
-        _self.dnNext = byId('next');
-        _self.dnPlay = byId('play');
-        _self.dnPause = byId('pause');
+        _self.dnPlayPause = byId('play-pause');
+        _self.dnHandler = byId('handler');
+        _self.dnTimeRemaining = byId('time-remaining');
+    };
+
+    var playSong = function playSong() {
+
+        var dur = _self.dnAudio.duration;
+        var pos = undefined;
+
+        _self.dnAudio.play();
+
+        _self.dnAudio.addEventListener('timeupdate', function() {
+        pos = _self.dnAudio.currentTime / dur * 100;
+        _self.dnHandler.style.left = pos + '%';
+          console.log(pos);
+        });
+    };
+
+    var handlePlayPause = function handlePlayPause() {
+        _self.dnPlayPause.addEventListener('click', function(evt) {
+            if (_self.dnAudio.paused) {
+                _self.dnAudio.play();
+                _self.dnPlayPause.textContent = 'Pause';
+            }
+            else {
+                _self.dnAudio.pause();
+                _self.dnPlayPause.textContent = 'Play';
+            }
+        });
     };
 
     //
@@ -103,6 +129,17 @@ var player = (function() {
                 // Inserts some audio tags for mp3, ogg, etc.
                 //
                 buildAudioTags(conf);
+
+                _self.dnAudio.addEventListener('loadeddata', function() {
+                    playSong();
+
+                    //
+                    // We start playing now. Set the text to pause.
+                    //
+                    _self.dnPlayPause.textContent = 'Pause';
+                });
+
+                handlePlayPause();
             }
         });
     };

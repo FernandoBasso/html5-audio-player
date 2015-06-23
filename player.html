@@ -1,14 +1,15 @@
 <div id='player'>
   <div class='main'>
     <div class='controls-wrapper cf'>
-      <div id='prev' class='prev ctrl'>Prev</div>
-      <div id='play' class='play ctrl'>Play</div>
-      <div id='pause' class='pause ctrl'>Pause</div>
-      <div id='next' class='next ctrl'>Next</div>
+      <span id='play-pause' class='play-pause ctrl'>Play</span>
+      <span id='gutter' class='gutter'>
+        <span id='handler' class='handler'>h</span>
+      </span>
+      <span id='time-remaining' class='time-remaining'>mm:ss</span>
     </div>
     <div class='playing'>
       <div id='wrap-audio'>
-        <audio id='audio' controls><!-- Filled with JS. --></audio>
+        <audio id='audio'><!-- Filled with JS. --></audio>
       </div>
       <div id='current'><!-- Filled with JS. --></div>
     </div>

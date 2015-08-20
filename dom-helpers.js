@@ -135,6 +135,67 @@ function ajax( options ) {
 }
 
 /**
+ * Finds the position X left of an element in relation to the whole page.
+ * Uses recursion.
+ */
+function pageX(elem) {
+
+    //
+    // While we can find an offsetParent, add it to what we
+    // already have.
+    //
+    if (elem.offsetParent) {
+        l(elem.offsetParent);
+        return elem.offsetLeft + pageX(elem.offsetParent);
+    }
+
+    return elem.offsetLeft;
+}
+
+
+/**
+ * Finds the position Y top of an element in relation to the whole page.
+ * Uses recursion.
+ */
+function pageY(elem) {
+
+    //
+    // While we can still find an offsetParent, add it to
+    // the offset we already have.
+    //
+    if (elem.offsetParent) {
+        l(elem.offsetParent);
+        return elem.offsetTop + pageY(elem.offsetParent);
+    }
+
+    return elem.offsetTop;
+}
+
+function getStyle(elem, name) {
+
+    if (elem.style[name]) {
+        l('elem.style[name]');
+        return elem.style[name];
+    }
+
+    else if (document.defaultView && document.defaultView.getComputedStyle) {
+        l('defaultView.getComputedStyle');
+        name = name.replace(/([A-Z])/g, '-$1');
+        name = name.toLowerCase();
+        var style = document.defaultView.getComputedStyle(elem, '');
+        return style && style.getPropertyValue(name);
+    }
+    // IE.
+    else if (elem.currentStyle) {
+        l('elem.currentStyle');
+        return elem.currentStyle[name]
+    }
+
+    l('null');
+    return null;
+}
+
+/**
  * Loads one of more css files.
  * @param {mixed} either a string or an array.
  */

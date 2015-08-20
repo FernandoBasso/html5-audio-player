@@ -12,7 +12,9 @@ $min-width-large: 800px;
   content: '';
   clear: both;
 }
-
+body {
+    margin: 0;
+}
 ul {
   list-style: outside none none;
   margin: 0;
@@ -56,28 +58,29 @@ ul {
   #player {
     width: 500px;
     .controls-wrapper {
-      position: relative;
+      //position: relative;
     }
     .play-pause {
       width: 50px;
-      cursor: pointer;
     }
     .play-pause, .gutter{
       display: inline-block;
       white-space: nowrap;
       height: 20px;
+      cursor: pointer;
     }
     .gutter {
       width: 300px;
       position: absolute;
-      background-color: #999;
-      left: 60px;
-      right: 50px;
+      background-color: #EABAEA;
+      left: 50px;
 
       .handler {
         position: absolute;
-        background-color: darkblue;
+        background-color: #9F1100;
         height: 20px;
+        width: 10px;
+        margin-left: -5px;
       }
     }
     .time-remaining {

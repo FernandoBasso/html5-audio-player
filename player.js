@@ -67,8 +67,6 @@ var player = (function() {
         var dur = _self.dnAudio.duration;
         var pos = undefined;
 
-        //_self.dnAudio.play();
-
         _self.dnAudio.addEventListener('timeupdate', function() {
             pos = _self.dnAudio.currentTime / dur * 100;
             _self.dnHandler.style.left = pos + '%';
@@ -102,6 +100,8 @@ var player = (function() {
         //    _self.dnHandler.style.left = evt.pageX - _self.gutterLeft - 150 + 'px';
 
         var lft = evt.pageX + _self.dnGutter;
+        var newHandlerPos;
+
         if (bDragging) {
             l(evt.pageX, _self.gutterLeft);
         }
@@ -109,8 +109,16 @@ var player = (function() {
                 && evt.pageX >= _self.gutterLeft
                 && evt.pageX <= (_self.gutterLeft + _self.gutterWidth))
         {
+            newHandlerPos = evt.pageX - _self.gutterLeft;
+            _self.dnHandler.style.left = newHandlerPos + 'px';
+            //l(newHandlerPos);
 
-            _self.dnHandler.style.left = evt.pageX - _self.gutterLeft + 'px';
+            var gutterPercentage = newHandlerPos * 100 / 300;
+            var songDuration = _self.dnAudio.duration;
+            var newTimePosition = gutterPercentage * songDuration / 100;
+            _self.dnAudio.currentTime = newTimePosition;
+            l(newTimePosition);
+            //l(gutterPercentage);
         }
     };
 
@@ -208,6 +216,7 @@ var player = (function() {
 
 player.init({
     songs: [
+    {url: 'songs/four', name: 'Querendo Chorar'},
     {url: 'songs/one', name: "Never Let Me Go"},
     {url: 'songs/two', name: 'Never Far Away'},
     {url: 'songs/three', name: 'The Truth Will Always Be'}

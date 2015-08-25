@@ -28,6 +28,11 @@ var player = (function() {
 
     var bDragging = false;
 
+    /**
+     * Builds a list of songs and append them to the proper place in the document.
+     *
+     * @param {array} songList - the list of songs.
+     */
     var buildPlaylist = function buildPlaylist(songList) {
         var ul = createNode('ul');
         songList.forEach(function(song) {
@@ -35,46 +40,81 @@ var player = (function() {
             li.appendChild(createText(song.name));
             ul.appendChild(li);
         });
+        /**
+         * TODO: Are we really sure we have an element with the ID of `playlist`?
+         * It should since it is provided by the player files itself.
+         */
         byId('playlist').appendChild(ul);
     };
 
+    /**
+     * Adds the <audio> tags in the document. Plays the first song of the list by default.
+     *
+     * @param {object} conf - contains the necessary information add an <audio> tag to the dom.
+     */
     var buildAudioTags = function buildAudioTags(conf) {
+
+        //
+        // The MP3 version.
+        //
         var sourceMp3 = createNode('source');
         sourceMp3.setAttribute('src', conf.songs[0].url + '.mp3');
         _self.dnAudio.appendChild(sourceMp3);
 
-        // <source src='songs/one.mp3' type='audio/mpeg'>
-        // <source src='songs/one.ogg' type='audio/ogg'>
+        //
+        // The OGG version.
+        //
         var sourceOgg = createNode('source');
         sourceOgg.setAttribute('src', conf.songs[0].url + '.ogg');
         _self.dnAudio.appendChild(sourceOgg);
     };
 
+    /**
+     * Retrive relevant elements related to the player and store them in local variables.
+     */
     var initControls = function initControls() {
         _self.dnAudio = byId('audio');
         _self.dnPlayPause = byId('play-pause');
         _self.dnHandler = byId('handler');
         _self.dnTimeRemaining = byId('time-remaining');
         _self.dnGutter = byId('gutter');
-        //_self.gutterWidth = parseInt(getStyle(_self.dnGutter, 'width'), 10);
-        _self.gutterLeft = parseInt(getStyle(_self.dnGutter, 'left'), 10);
         _self.gutterLeft = pageX(_self.dnGutter);
-        l(_self.gutterLeft);
     };
 
+    /**
+     * Starts the playing of the song in the <audio> tag.
+     */
     var playSong = function playSong() {
 
+        //
+        // `duration` is in seconds. Zero if no media data is available. Still, we only
+        // get to this function if a `loadeddata` event happens, so, we are probably safe here.
+        //
         var dur = _self.dnAudio.duration;
         var pos = undefined;
 
+        //
+        // Here, we move the handler/knob in in percentages. Say we are in 23% in the
+        // song, it is safe to move the handler 23% from the left in relation to its
+        // offsetParent, which is the gutter.
+        //
         _self.dnAudio.addEventListener('timeupdate', function() {
             pos = _self.dnAudio.currentTime / dur * 100;
             _self.dnHandler.style.left = pos + '%';
         });
     };
 
+    /**
+     * Deals with playing and pausing the song when the appropriate button is clicked.
+     */
     var handlePlayPause = function handlePlayPause() {
         _self.dnPlayPause.addEventListener('click', function(evt) {
+
+            //
+            // NOTE: `play()` and `pause()` are properties of `HTMLMediaElement` as
+            // is `paused`. We don't need to create those ourselves.
+            //
+
             if (_self.dnAudio.paused) {
                 _self.dnAudio.play();
                 _self.dnPlayPause.textContent = 'Pause';
@@ -86,44 +126,57 @@ var player = (function() {
         });
     };
 
+    /**
+     * Update the position of the handler/knob on the screen.
+     *
+     * @param {object} evt - The event object where the mouse was clicked/moded.
+     */
     var updateHandler = function updateHandler(evt) {
-
-        //
-        // TODO: It seems pageX doesn't consider body margins.
-        // Find the "real" pageX instead of hardcoding this 150px value.
-        //
-
-        //if (bDragging &&
-        //        evt.pageX >= _self.gutterLeft + 150 &&
-        //        evt.pageX <= (_self.gutterLeft + _self.gutterWidth + 150)) {
-
-        //    _self.dnHandler.style.left = evt.pageX - _self.gutterLeft - 150 + 'px';
 
         var lft = evt.pageX + _self.dnGutter;
         var newHandlerPos;
 
-        if (bDragging) {
-            l(evt.pageX, _self.gutterLeft);
-        }
+        //
+        // If we are dragging, and we are still withing left and right boundaries.
+        //
         if (bDragging
                 && evt.pageX >= _self.gutterLeft
-                && evt.pageX <= (_self.gutterLeft + _self.gutterWidth))
-        {
+                && evt.pageX <= (_self.gutterLeft + _self.gutterWidth)) {
+
+            //
+            // Update de handler's position on  the page.
+            //
             newHandlerPos = evt.pageX - _self.gutterLeft;
             _self.dnHandler.style.left = newHandlerPos + 'px';
-            //l(newHandlerPos);
 
+            //
+            // Calculate and go the the new song time.
+            //
+            // TODO: Move this to a separate function perhaps, since we are
+            // in `updateHandler` (which has nothing to do with the song time.
+            //
             var gutterPercentage = newHandlerPos * 100 / 300;
             var songDuration = _self.dnAudio.duration;
             var newTimePosition = gutterPercentage * songDuration / 100;
             _self.dnAudio.currentTime = newTimePosition;
-            l(newTimePosition);
-            //l(gutterPercentage);
         }
     };
 
+    /**
+     * Detects when the user is moving the handler.
+     */
     var handleDragHandler = function handleDragHandler() {
 
+        //
+        // This actually involves more than keeping an eye out of the handler itself,
+        // as the event handlers below show.
+        //
+
+
+        //
+        // First, anywhere the user clicks on the gutter, we assume he wants to play
+        // "that part" of the song, which also means `moving` should be true.
+        //
         _self.dnGutter.addEventListener('mousedown', function(evt) {
             _self.gutterLeft = pageX(this);
             _self.gutterWidth = this.offsetWidth;
@@ -131,10 +184,17 @@ var player = (function() {
             updateHandler(evt);
         });
 
+        //
+        // In case the mouse is moving, also assume we want to change the song's playing position.
+        // TODO: Perhaps we should not call `updateHandler` here since we might not be “moving”?
+        //
         document.addEventListener('mousemove', function(evt) {
             updateHandler(evt);
         });
 
+        //
+        // Simple. If the mouse is “up”, we are not “moving” the handler any longer.
+        //
         document.addEventListener('mouseup', function(evt) {
             bDragging = false;
         });
@@ -216,9 +276,9 @@ var player = (function() {
 
 player.init({
     songs: [
-    {url: 'songs/four', name: 'Querendo Chorar'},
-    {url: 'songs/one', name: "Never Let Me Go"},
-    {url: 'songs/two', name: 'Never Far Away'},
-    {url: 'songs/three', name: 'The Truth Will Always Be'}
+        {url: 'songs/four', name: 'Querendo Chorar'},
+        {url: 'songs/one', name: "Never Let Me Go"},
+        {url: 'songs/two', name: 'Never Far Away'},
+        {url: 'songs/three', name: 'The Truth Will Always Be'}
     ]
 });

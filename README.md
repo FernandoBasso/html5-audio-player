@@ -13,3 +13,8 @@ of `player-wrapper`.
 ...
 ```
 
+## Code Style
+
+Let's just use this one. It can't be that wrong. :)
+
+https://google.github.io/styleguide/javascriptguide.xml

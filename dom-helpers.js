@@ -145,7 +145,6 @@ function pageX(elem) {
     // already have.
     //
     if (elem.offsetParent) {
-        l(elem.offsetParent);
         return elem.offsetLeft + pageX(elem.offsetParent);
     }
 

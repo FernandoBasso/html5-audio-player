@@ -321,7 +321,7 @@ var player = (function() {
                     //
                     // We start playing now. Set the text to pause.
                     //
-                    _self.dnPlayPause.textContent = 'Pause';
+                    _self.dnPlayPause.textContent = 'Play';
                 });
 
                 handlePlayPause();

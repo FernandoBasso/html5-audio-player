@@ -81,6 +81,58 @@ var player = (function() {
         _self.gutterLeft = pageX(_self.dnGutter);
     };
 
+
+    /**
+     * Padds a string with a leading zero if string is 1 char long.
+     *
+     * @param {integer/string} digitOrString - the digit to be formated.
+     *
+     * @return {string} - the padded string.
+     */
+    var strPad = function strPad(digitOrString) {
+        //
+        // Makes sure it is a string.
+        //
+        var str = String(digitOrString);
+
+        return str.length === 1 ? '0' + str : str;
+    };
+
+    /**
+     * Formats hour, minute and second to a clock-like representation.
+     *
+     *@return {string} - an object containing hour, minute and seconds as strings.
+     */
+    var formatTime = function formatTime(hours, minutes, seconds) {
+        return strPad(hours) + ':' + strPad(minutes) + ':' + strPad(seconds);
+    };
+
+    /**
+     * Updates the “digital clock” that display the current playing time.
+     *
+     * @param {number} secondsEllapased - The number of seconds that have been played so far.
+     *                                    If it has decimal places, they are discarded.
+     */
+    var updateClock = function updateClock(secondsEllapased) {
+
+        var hours, minutes, seconds;
+
+        //
+        // Some browsers give seconds + some fractional time, which is useless
+        // for our purposes.
+        //
+        secondsEllapased = Math.floor(secondsEllapased);
+
+        hours = Math.floor(secondsEllapased / 3600);
+        minutes = Math.floor((secondsEllapased / 60) % 60);
+        seconds = secondsEllapased % 60;
+
+        //
+        // Updates the user interface.
+        //
+        _self.dnTimeRemaining.textContent = formatTime(hours, minutes, seconds);
+    };
+
     /**
      * Starts the playing of the song in the <audio> tag.
      */
@@ -99,8 +151,18 @@ var player = (function() {
         // offsetParent, which is the gutter.
         //
         _self.dnAudio.addEventListener('timeupdate', function() {
-            pos = _self.dnAudio.currentTime / dur * 100;
-            _self.dnHandler.style.left = pos + '%';
+
+            //
+            // NOTE: This `setInterval` is an attempt to make the seconds to be updated
+            // really about every one second in the user interface. The main problem
+            // is that `timeupdate` fires at more random times, which causes our function
+            // to update the UI at irregular intervals.
+            //
+            setInterval(function () {
+                pos = _self.dnAudio.currentTime / dur * 100;
+                _self.dnHandler.style.left = pos + '%';
+                updateClock(_self.dnAudio.currentTime);
+            }, 1000);
         });
     };
 

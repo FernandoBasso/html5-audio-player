@@ -151,19 +151,16 @@ var player = (function() {
         // offsetParent, which is the gutter.
         //
         _self.dnAudio.addEventListener('timeupdate', function() {
-
-            //
-            // NOTE: This `setInterval` is an attempt to make the seconds to be updated
-            // really about every one second in the user interface. The main problem
-            // is that `timeupdate` fires at more random times, which causes our function
-            // to update the UI at irregular intervals.
-            //
-            setInterval(function () {
-                pos = _self.dnAudio.currentTime / dur * 100;
-                _self.dnHandler.style.left = pos + '%';
-                updateClock(_self.dnAudio.currentTime);
-            }, 1000);
+            pos = _self.dnAudio.currentTime / dur * 100;
+            _self.dnHandler.style.left = pos + '%';
         });
+
+        //
+        // Updates the clock every 1 second.
+        //
+        setInterval(function () {
+            updateClock(_self.dnAudio.currentTime);
+        }, 1000);
     };
 
     /**
@@ -195,7 +192,8 @@ var player = (function() {
      */
     var updateHandler = function updateHandler(evt) {
 
-        var lft = evt.pageX + _self.dnGutter;
+        //var lft = evt.pageX; // + _self.dnGutter;
+        //l(_self.dnGutter);
         var newHandlerPos;
 
         //
@@ -332,6 +330,7 @@ var player = (function() {
     };
 
     _self.init = init;
+    _self.start = playSong;
 
     return _self;
 }());

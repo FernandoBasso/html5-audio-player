@@ -215,7 +215,7 @@ var player = (function() {
             // TODO: Move this to a separate function perhaps, since we are
             // in `updateHandler` (which has nothing to do with the song time.
             //
-            var gutterPercentage = newHandlerPos * 100 / 300;
+            var gutterPercentage = newHandlerPos * 100 / _self.gutterLeft;
             var songDuration = _self.dnAudio.duration;
             var newTimePosition = gutterPercentage * songDuration / 100;
             _self.dnAudio.currentTime = newTimePosition;

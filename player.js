@@ -18,7 +18,8 @@ var player = (function () {
         dnHandler: undefined,
         dnGutter: undefined,
         gutterWidth: undefined,
-        gutterLeft: undefined
+        gutterLeft: undefined,
+        intervalId: undefined
     };
 
     var conf;
@@ -107,6 +108,16 @@ var player = (function () {
         return strPad(hours) + ':' + strPad(minutes) + ':' + strPad(seconds);
     };
 
+    var startUpdateClock = function startUpdateClock () {
+        //
+        // Updates the clock every 1 second.
+        //
+        _self.intervalId = setInterval(function () {
+            l('setInterval running...');
+            updateClock(_self.dnAudio.currentTime);
+        }, 1000);
+    };
+
     /**
      * Updates the “digital clock” that display the current playing time.
      *
@@ -155,13 +166,12 @@ var player = (function () {
             _self.dnHandler.style.left = pos + '%';
         });
 
-        //
-        // Updates the clock every 1 second.
-        //
-        setInterval(function () {
-            updateClock(_self.dnAudio.currentTime);
-        }, 1000);
+        l(_self.dnAudio.currentTime);
+        if (_self.dnAudio.currentTime > 0) {
+            startUpdateClock();
+        }
     };
+
 
     /**
      * Deals with playing and pausing the song when the appropriate button is clicked.
@@ -175,12 +185,15 @@ var player = (function () {
             //
 
             if (_self.dnAudio.paused) {
-                _self.dnAudio.play();300
+                _self.dnAudio.play();
                 _self.dnPlayPause.textContent = 'Pause';
+                startUpdateClock();
             }
             else {
                 _self.dnAudio.pause();
                 _self.dnPlayPause.textContent = 'Play';
+                l(_self.intervalId);
+                clearInterval(_self.intervalId);
             }
         });
     };

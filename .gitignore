@@ -18,3 +18,10 @@ _bk/
 # Only .scss files are commited.
 #
 *.css
+
+#
+# Vim tags file.
+#
+tags
+
+

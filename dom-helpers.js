@@ -2,9 +2,7 @@
  * A shorter console.log helper.
  * @param {object} one or more objects.
  */
-var l = function l() {
-    console.log.apply(console, arguments);
-};
+var l = console.log.bind(console);
 
 /**
  * Gets an element by its id attribute.

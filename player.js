@@ -220,6 +220,7 @@ var player = (function () {
             // Update de handler's position on  the page.
             //
             newHandlerPos = evt.pageX - _self.gutterLeft;
+            l(evt.pageX, _self.gutterLeft, newHandlerPos);
             _self.dnHandler.style.left = newHandlerPos + 'px';
 
             //
@@ -228,7 +229,9 @@ var player = (function () {
             // TODO: Move this to a separate function perhaps, since we are
             // in `updateHandler` (which has nothing to do with the song time.
             //
-            var gutterPercentage = newHandlerPos * 100 / _self.gutterLeft;
+            // Divided by the width of the gutter itself!!!
+            //
+            var gutterPercentage = newHandlerPos * 100 / _self.gutterWidth; //_self.gutterLeft;
             var songDuration = _self.dnAudio.duration;
             var newTimePosition = gutterPercentage * songDuration / 100;
             _self.dnAudio.currentTime = newTimePosition;

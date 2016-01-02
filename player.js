@@ -19,7 +19,8 @@ var player = (function () {
         dnGutter: undefined,
         gutterWidth: undefined,
         gutterLeft: undefined,
-        intervalId: undefined
+        intervalId: undefined,
+        dnPlayList: []
     };
 
     var conf;
@@ -36,10 +37,17 @@ var player = (function () {
      */
     var buildPlaylist = function buildPlaylist(songList) {
         var ul = createNode('ul');
-        songList.forEach(function (song) {
+        songList.forEach(function (song, index) {
             var li = createNode('li');
+            li.setAttribute('data-index', index);
             li.appendChild(createText(song.name));
             ul.appendChild(li);
+
+            //
+            // Store the list of songs beacuse we'll need it later to
+            // change the playing song.
+            //
+            _self.dnPlayList.push(li);
         });
         /**
          * TODO: Are we really sure we have an element with the ID of `playlist`?
@@ -49,24 +57,27 @@ var player = (function () {
     };
 
     /**
-     * Adds the <audio> tags in the document. Plays the first song of the list by default.
+     * Adds the <audio> tags in the document.
      *
      * @param {object} conf - contains the necessary information add an <audio> tag to the dom.
+     * @param {integer} index - which song on the playlist to play by default.
      */
-    var buildAudioTags = function buildAudioTags(conf) {
+    var buildAudioTags = function buildAudioTags(arrSongs, index) {
 
         //
         // The MP3 version.
         //
         var sourceMp3 = createNode('source');
-        sourceMp3.setAttribute('src', conf.songs[0].url + '.mp3');
+        sourceMp3.setAttribute('id', 'mp3Path');
+        sourceMp3.setAttribute('src', arrSongs[index].url + '.mp3');
         _self.dnAudio.appendChild(sourceMp3);
 
         //
         // The OGG version.
         //
         var sourceOgg = createNode('source');
-        sourceOgg.setAttribute('src', conf.songs[0].url + '.ogg');
+        sourceOgg.setAttribute('id', 'oggPath');
+        sourceOgg.setAttribute('src', arrSongs[index].url + '.ogg');
         _self.dnAudio.appendChild(sourceOgg);
     };
 
@@ -113,7 +124,6 @@ var player = (function () {
         // Updates the clock every 1 second.
         //
         _self.intervalId = setInterval(function () {
-            l('setInterval running...');
             updateClock(_self.dnAudio.currentTime);
         }, 1000);
     };
@@ -145,10 +155,10 @@ var player = (function () {
     };
 
     /**
+     * TODO: Rename this function. It doesn't do what it says it does.
      * Starts the playing of the song in the <audio> tag.
      */
     var playSong = function playSong() {
-
         //
         // `duration` is in seconds. Zero if no media data is available. Still, we only
         // get to this function if a `loadeddata` event happens, so, we are probably safe here.
@@ -166,7 +176,6 @@ var player = (function () {
             _self.dnHandler.style.left = pos + '%';
         });
 
-        l(_self.dnAudio.currentTime);
         if (_self.dnAudio.currentTime > 0) {
             startUpdateClock();
         }
@@ -192,7 +201,6 @@ var player = (function () {
             else {
                 _self.dnAudio.pause();
                 _self.dnPlayPause.textContent = 'Play';
-                l(_self.intervalId);
                 clearInterval(_self.intervalId);
             }
         });
@@ -205,8 +213,6 @@ var player = (function () {
      */
     var updateHandler = function updateHandler(evt) {
 
-        //var lft = evt.pageX; // + _self.dnGutter;
-        //l(_self.dnGutter);
         var newHandlerPos;
 
         //
@@ -220,7 +226,6 @@ var player = (function () {
             // Update de handler's position on  the page.
             //
             newHandlerPos = evt.pageX - _self.gutterLeft;
-            l(evt.pageX, _self.gutterLeft, newHandlerPos);
             _self.dnHandler.style.left = newHandlerPos + 'px';
 
             //
@@ -234,7 +239,10 @@ var player = (function () {
             var gutterPercentage = newHandlerPos * 100 / _self.gutterWidth; //_self.gutterLeft;
             var songDuration = _self.dnAudio.duration;
             var newTimePosition = gutterPercentage * songDuration / 100;
+
+            l(songDuration, newTimePosition);
             _self.dnAudio.currentTime = newTimePosition;
+            _self.dnAudio.play();
         }
     };
 
@@ -276,6 +284,36 @@ var player = (function () {
         });
 
     };
+
+
+    //
+    // Event handlers regarding change the playing song →  playlist.
+    //
+
+    /**
+     * Changes the song being played.
+     */
+    function changeSong() {
+
+        _self.dnPlayList.forEach(function (song) {
+            song.addEventListener('click', function (evt) {
+                //
+                // DOING:
+                // Change path of the <source> tags and play from the beginning
+                //
+                //l(this.getAttribute('data-index'));
+                var index = this.getAttribute('data-index');
+                byId('oggPath').setAttribute('src', conf.songs[index].url + '.ogg');
+                byId('mp3Path').setAttribute('src', conf.songs[index].url + '.mp3');
+                _self.dnAudio.load();
+                _self.dnAudio.addEventListener('loadeddata', function () {
+                    _self.dnAudio.play();
+                }, false);
+            });
+        });
+
+    }
+
 
     //
     // Starts everything.
@@ -326,8 +364,14 @@ var player = (function () {
 
                 //
                 // Inserts some audio tags for mp3, ogg, etc.
+                // By default, the default is the first song in the array.
                 //
-                buildAudioTags(conf);
+                buildAudioTags(conf.songs, 0);
+
+                //
+                // DOING: Perhaps `loadeddata` should be listened to from inside playSong(),
+                // and then handlePlayPause(), handleDragHandler() should go in there as well.
+                //
 
                 _self.dnAudio.addEventListener('loadeddata', function () {
                     playSong();
@@ -341,6 +385,8 @@ var player = (function () {
                 handlePlayPause();
 
                 handleDragHandler();
+
+                changeSong();
             }
         });
     };
@@ -353,9 +399,9 @@ var player = (function () {
 
 player.init({
     songs: [
-        {url: 'songs/four', name: 'Querendo Chorar'},
-        {url: 'songs/one', name: "Never Let Me Go"},
-        {url: 'songs/two', name: 'Never Far Away'},
-        {url: 'songs/three', name: 'The Truth Will Always Be'}
+        {url: 'songs/querendo-chorar', name: 'Querendo Chorar'},
+        {url: 'songs/fire-in-the-sky', name: 'Fire In The Sky'},
+        {url: 'songs/amberdawn', name: 'Amberdawn'},
+        {url: 'songs/orange-blossom-special', name: 'Orange Blossom Special'}
     ]
 });

@@ -69,6 +69,7 @@ var player = (function () {
         //
         var sourceMp3 = createNode('source');
         sourceMp3.setAttribute('id', 'mp3Path');
+        sourceMp3.setAttribute('type', 'audio/mpeg');
         sourceMp3.setAttribute('src', arrSongs[index].url + '.mp3');
         _self.dnAudio.appendChild(sourceMp3);
 
@@ -77,6 +78,7 @@ var player = (function () {
         //
         var sourceOgg = createNode('source');
         sourceOgg.setAttribute('id', 'oggPath');
+        sourceMp3.setAttribute('type', 'audio/ogg');
         sourceOgg.setAttribute('src', arrSongs[index].url + '.ogg');
         _self.dnAudio.appendChild(sourceOgg);
     };
@@ -173,6 +175,11 @@ var player = (function () {
         //
         _self.dnAudio.addEventListener('timeupdate', function () {
             pos = _self.dnAudio.currentTime / dur * 100;
+
+
+            // BUG: webkit, opon click, currentTime is always 0.
+            l(_self.dnAudio.currentTime);
+
             _self.dnHandler.style.left = pos + '%';
         });
 
@@ -240,8 +247,12 @@ var player = (function () {
             var songDuration = _self.dnAudio.duration;
             var newTimePosition = gutterPercentage * songDuration / 100;
 
-            l(songDuration, newTimePosition);
+            //
+            // This is the only place we are assigning a value to currentTime.
+            //
             _self.dnAudio.currentTime = newTimePosition;
+            l('tp', newTimePosition); // An expected time value.
+            l('::', _self.dnAudio.currentTime); // Always zero! WTF?
             _self.dnAudio.play();
         }
     };
@@ -399,8 +410,9 @@ var player = (function () {
 
 player.init({
     songs: [
+        //{url: 'https://upload.wikimedia.org/wikipedia/en/4/45/ACDC_-_Back_In_Black-sample', name: 'Black in Black'},
         {url: 'songs/querendo-chorar', name: 'Querendo Chorar'},
-        {url: 'songs/fire-in-the-sky', name: 'Fire In The Sky'},
+        {url: 'https://upload.wikimedia.org/wikipedia/en/4/4a/Bach_Prelude_Fugue_BWV_542', name: 'Prelude and Fugue'},
         {url: 'songs/amberdawn', name: 'Amberdawn'},
         {url: 'songs/orange-blossom-special', name: 'Orange Blossom Special'}
     ]

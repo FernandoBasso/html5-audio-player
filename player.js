@@ -23,11 +23,17 @@ var player = (function () {
         dnPlayList: []
     };
 
+
+    /**
+     * An object with configuration to be applied to the player.
+     * @var {object} conf
+     */
     var conf;
 
-    var dnCurrent;
-    var dnPlayer;
-
+    /**
+     * Holds state to know when we are dragging the handler or not.
+     * @var {boolean} bDragging
+     */
     var bDragging = false;
 
     /**
@@ -59,8 +65,8 @@ var player = (function () {
     /**
      * Adds the <audio> tags in the document.
      *
-     * @param {object} conf - contains the necessary information add an <audio> tag to the dom.
-     * @param {integer} index - which song on the playlist to play by default.
+     * @param {object} conf - contains the necessary information add an <audio> tag to the DOM.
+     * @param {integer} index - which song on the playlist to play.
      */
     var buildAudioTags = function buildAudioTags(arrSongs, index) {
 
@@ -84,7 +90,7 @@ var player = (function () {
     };
 
     /**
-     * Retrive relevant elements related to the player and store them in local variables.
+     * Retrive relevant elements related to the player and save a reference to them.
      */
     var initControls = function initControls() {
         _self.dnAudio = byId('audio');
@@ -131,7 +137,7 @@ var player = (function () {
     };
 
     /**
-     * Updates the “digital clock” that display the current playing time.
+     * Updates the “digital clock” that displays the current playing time.
      *
      * @param {number} secondsEllapased - The number of seconds that have been played so far.
      *                                    If it has decimal places, they are discarded.
@@ -156,6 +162,11 @@ var player = (function () {
         _self.dnTimeRemaining.textContent = formatTime(hours, minutes, seconds);
     };
 
+
+    var playPauseText = function playPauseText () {
+        _self.dnPlayPause.textContent = _self.dnAudio.paused ? 'Play' : 'Pause';
+    }
+
     /**
      * TODO: Rename this function. It doesn't do what it says it does.
      * Starts the playing of the song in the <audio> tag.
@@ -163,7 +174,7 @@ var player = (function () {
     var playSong = function playSong() {
         //
         // `duration` is in seconds. Zero if no media data is available. Still, we only
-        // get to this function if a `loadeddata` event happens, so, we are probably safe here.
+        // invoke this function if a `loadeddata` event happens, so, we are probably safe here.
         //
         var dur = _self.dnAudio.duration;
         var pos = undefined;
@@ -175,10 +186,6 @@ var player = (function () {
         //
         _self.dnAudio.addEventListener('timeupdate', function () {
             pos = _self.dnAudio.currentTime / dur * 100;
-
-
-            // BUG: webkit, opon click, currentTime is always 0.
-            l(_self.dnAudio.currentTime);
 
             _self.dnHandler.style.left = pos + '%';
         });
@@ -216,7 +223,7 @@ var player = (function () {
     /**
      * Update the position of the handler/knob on the screen.
      *
-     * @param {object} evt - The event object where the mouse was clicked/moded.
+     * @param {object} evt - The event object produced by the mouse click/drag.
      */
     var updateHandler = function updateHandler(evt) {
 
@@ -236,23 +243,18 @@ var player = (function () {
             _self.dnHandler.style.left = newHandlerPos + 'px';
 
             //
-            // Calculate and go the the new song time.
+            // Calculate and go the the new position in the song's playing time.
             //
-            // TODO: Move this to a separate function perhaps, since we are
-            // in `updateHandler` (which has nothing to do with the song time.
+            // TODO: Perhaps move this to a separate function, since we are
+            // in `updateHandler` (which has nothing to do with the song time).
             //
             // Divided by the width of the gutter itself!!!
             //
-            var gutterPercentage = newHandlerPos * 100 / _self.gutterWidth; //_self.gutterLeft;
+            var gutterPercentage = newHandlerPos * 100 / _self.gutterWidth;
             var songDuration = _self.dnAudio.duration;
             var newTimePosition = gutterPercentage * songDuration / 100;
 
-            //
-            // This is the only place we are assigning a value to currentTime.
-            //
             _self.dnAudio.currentTime = newTimePosition;
-            l('tp', newTimePosition); // An expected time value.
-            l('::', _self.dnAudio.currentTime); // Always zero! WTF?
             _self.dnAudio.play();
         }
     };
@@ -281,7 +283,6 @@ var player = (function () {
 
         //
         // In case the mouse is moving, also assume we want to change the song's playing position.
-        // TODO: Perhaps we should not call `updateHandler` here since we might not be “moving”?
         //
         document.addEventListener('mousemove', function (evt) {
             updateHandler(evt);
@@ -312,13 +313,13 @@ var player = (function () {
                 // DOING:
                 // Change path of the <source> tags and play from the beginning
                 //
-                //l(this.getAttribute('data-index'));
                 var index = this.getAttribute('data-index');
                 byId('oggPath').setAttribute('src', conf.songs[index].url + '.ogg');
                 byId('mp3Path').setAttribute('src', conf.songs[index].url + '.mp3');
                 _self.dnAudio.load();
                 _self.dnAudio.addEventListener('loadeddata', function () {
                     _self.dnAudio.play();
+                    playPauseText();
                 }, false);
             });
         });
@@ -328,39 +329,29 @@ var player = (function () {
 
     //
     // Starts everything.
-    // TODO: Pass configuration object.
     //
     var init = function init(config) {
 
         //
-        // This is the only dom node we have available
-        // before fetching the player html. An element with id
-        // `player-wrapper` is required in the document.
+        // This is the only dom node we have available before fetching the
+        // player html. An element with id `player-wrapper` is required in the
+        // document. That is, client code MUST provide that element with that id.
         //
         _self.dnWrapper = byId('player-wrapper');
 
         //
-        // Cache the configuration in so that the entire main
-        // scope has access to it.
+        // Cache the configuration in so that the entire main scope has access to it.
         //
         conf = config;
 
         //
-        // Load the core player html elements from a file
-        // to keep things more modular.
+        // Load the core player html elements from a file to keep things more modular.
         //
         ajax({
             type: 'GET',
             url: 'player.html',
             onSuccess: function (playerHtml) {
                 byId('player-wrapper').innerHTML = playerHtml;
-
-                //
-                // Load CSS just now, so, users can avoid loading
-                // unecessary styles with the main web page request.
-                // PROBLEM: By the time css finished loading, JS has already done
-                // some work and found elements not yet properly styled.
-                //loadCss('player.css');
 
                 //
                 // Builds the playlist and shows it on the page.
@@ -390,7 +381,13 @@ var player = (function () {
                     //
                     // We start playing now. Set the text to pause.
                     //
-                    _self.dnPlayPause.textContent = 'Play';
+                    //_self.dnPlayPause.textContent = 'Play';
+                    if (_self.dnAudio.paused) {
+                        _self.dnPlayPause.textContent = 'Play';
+                    }
+                    else {
+                        _self.dnPlayPause.textContent = 'Pause';
+                    }
                 });
 
                 handlePlayPause();
@@ -403,7 +400,6 @@ var player = (function () {
     };
 
     _self.init = init;
-    _self.start = playSong;
 
     return _self;
 }());

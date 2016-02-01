@@ -128,6 +128,11 @@ var player = (function () {
     };
 
     var startUpdateClock = function startUpdateClock () {
+
+        if (_self.intervalId !== undefined) {
+            clearInterval(_self.intervalId);
+        }
+
         //
         // Updates the clock every 1 second.
         //
@@ -164,7 +169,14 @@ var player = (function () {
 
 
     var playPauseText = function playPauseText () {
-        _self.dnPlayPause.textContent = _self.dnAudio.paused ? 'Play' : 'Pause';
+        if (_self.dnAudio.paused) {
+            _self.dnPlayPause.textContent = 'Play';
+            clearInterval(_self.intervalId);
+        }
+        else {
+            _self.dnPlayPause.textContent = 'Pause';
+            startUpdateClock();
+        }
     }
 
     /**
@@ -190,9 +202,6 @@ var player = (function () {
             _self.dnHandler.style.left = pos + '%';
         });
 
-        if (_self.dnAudio.currentTime > 0) {
-            startUpdateClock();
-        }
     };
 
 
@@ -256,6 +265,7 @@ var player = (function () {
 
             _self.dnAudio.currentTime = newTimePosition;
             _self.dnAudio.play();
+            startUpdateClock();
         }
     };
 

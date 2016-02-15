@@ -414,12 +414,3 @@ var player = (function () {
     return _self;
 }());
 
-player.init({
-    songs: [
-        //{url: 'https://upload.wikimedia.org/wikipedia/en/4/45/ACDC_-_Back_In_Black-sample', name: 'Black in Black'},
-        {url: 'songs/querendo-chorar', name: 'Querendo Chorar'},
-        {url: 'https://upload.wikimedia.org/wikipedia/en/4/4a/Bach_Prelude_Fugue_BWV_542', name: 'Prelude and Fugue'},
-        {url: 'songs/amberdawn', name: 'Amberdawn'},
-        {url: 'songs/orange-blossom-special', name: 'Orange Blossom Special'}
-    ]
-});

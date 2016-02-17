@@ -58,7 +58,8 @@ ul {
   #player {
     width: 500px;
     .controls-wrapper {
-      //position: relative;
+      position: relative;
+      height: 36px;
     }
     .play-pause {
       width: 50px;
@@ -66,8 +67,14 @@ ul {
     .play-pause, .gutter{
       display: inline-block;
       white-space: nowrap;
-      height: 20px;
+      height: 36px;
       cursor: pointer;
+    }
+    .paused {
+      background: center/36px no-repeat url(images/play-circle-fill.svg);
+    }
+    .playing {
+      background: center/36px no-repeat url(images/pause-circle-fill.svg);
     }
     .gutter {
       width: 300px;
@@ -78,7 +85,7 @@ ul {
       .handler {
         position: absolute;
         background-color: #9F1100;
-        height: 20px;
+        height: 36px;
         width: 10px;
         margin-left: -5px;
       }

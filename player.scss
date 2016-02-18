@@ -8,95 +8,142 @@ $min-width-large: 800px;
  * Basic styling and reset.
  */
 .cf:after, .cf:before {
-  display: block;
-  content: '';
-  clear: both;
+    display: block;
+    content: '';
+    clear: both;
 }
 body {
     margin: 0;
 }
 ul {
-  list-style: outside none none;
-  margin: 0;
-  padding: 0;
+    list-style: outside none none;
+    margin: 0;
+    padding: 0;
 }
 
 #player {
-  background-color: $bg;
-  color: $fg;
-  position: relative;
+    background-color: $bg;
+    color: $fg;
+    position: relative;
+    .play-pause, .gutter {
+        cursor: pointer;
+        display: inline-block;
+    }
+    .gutter, .handler {
+        position: absolute;
+    }
+    .gutter {
+        position: absolute;
+        background-color: #EABAEA;
+    }
+    .handler {
+        background-color: #9F1100;
+    }
+    .playlist {
+        background-color: #444;
+    }
+    .time-remaining {
+        position: absolute;
+    }
 }
-#player {
-  .playlist {
-    background-color: #444;
-  }
+
+#playlist li {
+    cursor: pointer;
 }
+
 
 
 
 @mixin mediq-query-small($width) {
-  @media screen and (max-width: $max-width-small) {
-    @content;
-  }
+    @media screen and (max-width: $max-width-small) {
+        @content;
+    }
 }
 
 @mixin media-query-large($width) {
-  @media screen and (min-width: $min-width-large) {
-    @content;
-  }
+    @media screen and (min-width: $min-width-large) {
+        @content;
+    }
 }
 
 
 @media screen and (max-width: $max-width-small) {
-  #player {
-    .ctrl {
+    #player {
+        width: 100%;
+        .controls-wrapper {
+            height: 36px;
+        }
+        .play-pause {
+            width: 15%;
+        }
+        .play-pause, .gutter {
+            white-space: nowrap;
+            height: 36px;
+        }
+        .paused {
+            background: center/36px no-repeat url(images/play-circle-fill.svg);
+        }
+        .playing {
+            background: center/36px no-repeat url(images/pause-circle-fill.svg);
+        }
+        .gutter {
+            width: 65%;
+            left: 15%;
+
+            .handler {
+                height: 36px;
+                width: 10px;
+                margin-left: -5px;
+            }
+        }
+        .time-remaining {
+            left: 80%;
+        }
     }
-  }
+
 }
 
 @media screen and (min-width: $min-width-large) {
-  #player {
-    width: 500px;
-    .controls-wrapper {
-      position: relative;
-      height: 36px;
-    }
-    .play-pause {
-      width: 50px;
-    }
-    .play-pause, .gutter{
-      display: inline-block;
-      white-space: nowrap;
-      height: 36px;
-      cursor: pointer;
-    }
-    .paused {
-      background: center/36px no-repeat url(images/play-circle-fill.svg);
-    }
-    .playing {
-      background: center/36px no-repeat url(images/pause-circle-fill.svg);
-    }
-    .gutter {
-      width: 300px;
-      position: absolute;
-      background-color: #EABAEA;
-      left: 50px;
+    #player {
+        width: 500px;
+        .controls-wrapper {
+            height: 36px;
+        }
+        .play-pause {
+            width: 50px;
+        }
+        .play-pause, .gutter{
+            display: inline-block;
+            white-space: nowrap;
+            height: 36px;
+        }
+        .paused {
+            background: center/36px no-repeat url(images/play-circle-fill.svg);
+        }
+        .playing {
+            background: center/36px no-repeat url(images/pause-circle-fill.svg);
+        }
+        .gutter {
+            width: 300px;
+            position: absolute;
+            background-color: #EABAEA;
+            left: 50px;
 
-      .handler {
-        position: absolute;
-        background-color: #9F1100;
-        height: 36px;
-        width: 10px;
-        margin-left: -5px;
-      }
+            .handler {
+                position: absolute;
+                background-color: #9F1100;
+                height: 36px;
+                width: 10px;
+                margin-left: -5px;
+            }
+        }
+        .time-remaining {
+            left: 370px;
+            position: absolute;
+        }
     }
-    .time-remaining {
-      left: 370px;
-      position: absolute;
-    }
-  }
 
-  #playlist li {
-      cursor: pointer;
-  }
+    #playlist li {
+        cursor: pointer;
+    }
 }

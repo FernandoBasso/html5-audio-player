@@ -1,7 +1,7 @@
 $bg: #333;
 $fg: #f9f9f9;
-$max-width-small: 799px;
-$min-width-large: 800px;
+$max-width-small: 959px;
+$min-width-large: 960px;
 
 
 /**
@@ -21,19 +21,40 @@ ul {
     padding: 0;
 }
 
+/**
+ * Styles shared between large and small devices.
+ */
 #player {
     background-color: $bg;
     color: $fg;
     position: relative;
-    .play-pause, .gutter {
+    .play-pause, .gutter, .volume {
         cursor: pointer;
         display: inline-block;
-    }
-    .gutter, .handler {
+        height: 36px;
         position: absolute;
+    }
+    .play-pause {
+        left: 0;
+        background: center/36px no-repeat url(images/pause-circle-fill.svg);
+    }
+    .paused {
+        background: center/36px no-repeat url(images/play-circle-fill.svg);
+    }
+    .handler {
+        position: absolute;
+    }
+    .volume {
+        right: 0;
+        background: center/36px no-repeat url(images/volume-up.svg);
+    }
+    .controls-wrapper {
+        height: 36px;
+        .handler {
+            height: inherit;
+        }
     }
     .gutter {
-        position: absolute;
         background-color: #EABAEA;
     }
     .handler {
@@ -42,16 +63,10 @@ ul {
     .playlist {
         background-color: #444;
     }
-    .time-remaining {
-        position: absolute;
+    li {
+        cursor: pointer;
     }
 }
-
-#playlist li {
-    cursor: pointer;
-}
-
-
 
 
 @mixin mediq-query-small($width) {
@@ -66,84 +81,44 @@ ul {
     }
 }
 
-
+/**
+ * Styles for small devices.
+ */
 @media screen and (max-width: $max-width-small) {
     #player {
         width: 100%;
-        .controls-wrapper {
-            height: 36px;
-        }
-        .play-pause {
-            width: 15%;
-        }
-        .play-pause, .gutter {
-            white-space: nowrap;
-            height: 36px;
-        }
-        .paused {
-            background: center/36px no-repeat url(images/play-circle-fill.svg);
-        }
-        .playing {
-            background: center/36px no-repeat url(images/pause-circle-fill.svg);
-        }
-        .gutter {
-            width: 65%;
-            left: 15%;
 
+        .play-pause { width: 15%; }
+        .gutter { width: 70%; left: 15%; }
+        .volume { width: 15%; }
+
+        .gutter {
             .handler {
-                height: 36px;
-                width: 10px;
-                margin-left: -5px;
+                width: 20px;
+                margin-left: -10px;
             }
         }
-        .time-remaining {
-            left: 80%;
-        }
     }
-
 }
 
+/**
+ * Styles for large devices.
+ */
 @media screen and (min-width: $min-width-large) {
     #player {
-        width: 500px;
-        .controls-wrapper {
-            height: 36px;
-        }
-        .play-pause {
-            width: 50px;
-        }
-        .play-pause, .gutter{
-            display: inline-block;
-            white-space: nowrap;
-            height: 36px;
-        }
-        .paused {
-            background: center/36px no-repeat url(images/play-circle-fill.svg);
-        }
-        .playing {
-            background: center/36px no-repeat url(images/pause-circle-fill.svg);
-        }
-        .gutter {
-            width: 300px;
-            position: absolute;
-            background-color: #EABAEA;
-            left: 50px;
+        width: 70%;
+        margin: 0 auto;
 
+        .play-pause { width: 10%; }
+        .gutter { width: 80%; left: 10%; }
+        .volume { width: 10%; }
+
+        .gutter {
             .handler {
-                position: absolute;
-                background-color: #9F1100;
-                height: 36px;
                 width: 10px;
                 margin-left: -5px;
             }
         }
-        .time-remaining {
-            left: 370px;
-            position: absolute;
-        }
     }
 
-    #playlist li {
-        cursor: pointer;
-    }
 }

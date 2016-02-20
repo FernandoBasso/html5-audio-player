@@ -14,7 +14,7 @@ var player = (function () {
         dnAudio: undefined,
         dnPlayPause: undefined,
         dnPause: undefined,
-        dnTimeRemaining: undefined,
+        // TODO: dnTimeRemaining: undefined,
         dnHandler: undefined,
         dnGutter: undefined,
         gutterWidth: undefined,
@@ -96,7 +96,7 @@ var player = (function () {
         _self.dnAudio = byId('audio');
         _self.dnPlayPause = byId('play-pause');
         _self.dnHandler = byId('handler');
-        _self.dnTimeRemaining = byId('time-remaining');
+        // TODO: _self.dnTimeRemaining = byId('time-remaining');
         _self.dnGutter = byId('gutter');
         _self.gutterLeft = pageX(_self.dnGutter);
     };
@@ -164,7 +164,7 @@ var player = (function () {
         //
         // Updates the user interface.
         //
-        _self.dnTimeRemaining.textContent = formatTime(hours, minutes, seconds);
+        // TODO: _self.dnTimeRemaining.textContent = formatTime(hours, minutes, seconds);
     };
 
 
@@ -175,7 +175,7 @@ var player = (function () {
         }
         else {
             _self.dnPlayPause.textContent = 'Pause';
-            startUpdateClock();
+            // TODO: startUpdateClock();
         }
     }
 

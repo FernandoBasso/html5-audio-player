@@ -3,7 +3,6 @@ $fg: #f9f9f9;
 $max-width-small: 959px;
 $min-width-large: 960px;
 
-
 /**
  * Basic styling and reset.
  */
@@ -88,9 +87,9 @@ ul {
     #player {
         width: 100%;
 
-        .play-pause { width: 15%; }
-        .gutter { width: 70%; left: 15%; }
-        .volume { width: 15%; }
+        .play-pause { width: 20%; }
+        .gutter { width: 60%; left: 20%; }
+        .volume { width: 20%; }
 
         .gutter {
             .handler {
@@ -102,16 +101,26 @@ ul {
 }
 
 /**
+ * Style for medium-sized devices.
+ */
+@media screen and (min-width: 700px) {
+    #player {
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+/**
  * Styles for large devices.
  */
 @media screen and (min-width: $min-width-large) {
     #player {
-        width: 70%;
+        width: 800px;
         margin: 0 auto;
 
-        .play-pause { width: 10%; }
-        .gutter { width: 80%; left: 10%; }
-        .volume { width: 10%; }
+        .play-pause { width: 60px; }
+        .gutter { width: 800px - 120px; left: 60px; }
+        .volume { width: 60px; }
 
         .gutter {
             .handler {

@@ -14,7 +14,7 @@ var player = (function () {
         dnAudio: undefined,
         dnPlayPause: undefined,
         dnPause: undefined,
-        dnTimeRemaining: undefined,
+        // TODO: dnTimeRemaining: undefined,
         dnHandler: undefined,
         dnGutter: undefined,
         gutterWidth: undefined,
@@ -96,7 +96,7 @@ var player = (function () {
         _self.dnAudio = byId('audio');
         _self.dnPlayPause = byId('play-pause');
         _self.dnHandler = byId('handler');
-        _self.dnTimeRemaining = byId('time-remaining');
+        // TODO: _self.dnTimeRemaining = byId('time-remaining');
         _self.dnGutter = byId('gutter');
         _self.gutterLeft = pageX(_self.dnGutter);
     };
@@ -164,7 +164,7 @@ var player = (function () {
         //
         // Updates the user interface.
         //
-        _self.dnTimeRemaining.textContent = formatTime(hours, minutes, seconds);
+        // TODO: _self.dnTimeRemaining.textContent = formatTime(hours, minutes, seconds);
     };
 
 
@@ -175,7 +175,7 @@ var player = (function () {
         }
         else {
             _self.dnPlayPause.textContent = 'Pause';
-            startUpdateClock();
+            // TODO: startUpdateClock();
         }
     }
 
@@ -206,6 +206,23 @@ var player = (function () {
 
 
     /**
+     * Toggles the icon on the play/pause UI element.
+     *
+     * @param {boolean} isPaused.
+     */
+    var togglePlayPauseUI = function togglePlayPauseUI (isPaused) {
+
+        if (isPaused) {
+            _self.dnPlayPause.classList.add('paused');
+            _self.dnPlayPause.classList.remove('playing');
+        }
+        else {
+            _self.dnPlayPause.classList.add('playing');
+            _self.dnPlayPause.classList.remove('paused');
+        }
+    };
+
+    /**
      * Deals with playing and pausing the song when the appropriate button is clicked.
      */
     var handlePlayPause = function handlePlayPause() {
@@ -218,14 +235,13 @@ var player = (function () {
 
             if (_self.dnAudio.paused) {
                 _self.dnAudio.play();
-                _self.dnPlayPause.textContent = 'Pause';
                 startUpdateClock();
             }
             else {
                 _self.dnAudio.pause();
-                _self.dnPlayPause.textContent = 'Play';
                 clearInterval(_self.intervalId);
             }
+            togglePlayPauseUI(_self.dnAudio.paused);
         });
     };
 
@@ -302,6 +318,7 @@ var player = (function () {
         // Simple. If the mouse is “up”, we are not “moving” the handler any longer.
         //
         document.addEventListener('mouseup', function (evt) {
+            togglePlayPauseUI();
             bDragging = false;
         });
 
@@ -329,7 +346,7 @@ var player = (function () {
                 _self.dnAudio.load();
                 _self.dnAudio.addEventListener('loadeddata', function () {
                     _self.dnAudio.play();
-                    playPauseText();
+                    togglePlayPauseUI(_self.dnAudio.paused);
                 }, false);
             });
         });
@@ -392,12 +409,7 @@ var player = (function () {
                     // We start playing now. Set the text to pause.
                     //
                     //_self.dnPlayPause.textContent = 'Play';
-                    if (_self.dnAudio.paused) {
-                        _self.dnPlayPause.textContent = 'Play';
-                    }
-                    else {
-                        _self.dnPlayPause.textContent = 'Pause';
-                    }
+                    togglePlayPauseUI(_self.dnAudio.paused);
                 });
 
                 handlePlayPause();
@@ -413,4 +425,3 @@ var player = (function () {
 
     return _self;
 }());
-

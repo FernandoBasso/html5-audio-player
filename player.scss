@@ -1,95 +1,124 @@
 $bg: #333;
 $fg: #f9f9f9;
-$max-width-small: 799px;
-$min-width-large: 800px;
+$max-width-small: 959px;
+$min-width-large: 960px;
 
 
 /**
  * Basic styling and reset.
  */
 .cf:after, .cf:before {
-  display: block;
-  content: '';
-  clear: both;
+    display: block;
+    content: '';
+    clear: both;
 }
 body {
     margin: 0;
 }
 ul {
-  list-style: outside none none;
-  margin: 0;
-  padding: 0;
+    list-style: outside none none;
+    margin: 0;
+    padding: 0;
 }
 
+/**
+ * Styles shared between large and small devices.
+ */
 #player {
-  background-color: $bg;
-  color: $fg;
-  position: relative;
+    background-color: $bg;
+    color: $fg;
+    position: relative;
+    .play-pause, .gutter, .volume {
+        cursor: pointer;
+        display: inline-block;
+        height: 36px;
+        position: absolute;
+    }
+    .play-pause {
+        left: 0;
+        background: center/36px no-repeat url(images/pause-circle-fill.svg);
+    }
+    .paused {
+        background: center/36px no-repeat url(images/play-circle-fill.svg);
+    }
+    .handler {
+        position: absolute;
+    }
+    .volume {
+        right: 0;
+        background: center/36px no-repeat url(images/volume-up.svg);
+    }
+    .controls-wrapper {
+        height: 36px;
+        .handler {
+            height: inherit;
+        }
+    }
+    .gutter {
+        background-color: #EABAEA;
+    }
+    .handler {
+        background-color: #9F1100;
+    }
+    .playlist {
+        background-color: #444;
+    }
+    li {
+        cursor: pointer;
+    }
 }
-#player {
-  .playlist {
-    background-color: #444;
-  }
-}
-
 
 
 @mixin mediq-query-small($width) {
-  @media screen and (max-width: $max-width-small) {
-    @content;
-  }
+    @media screen and (max-width: $max-width-small) {
+        @content;
+    }
 }
 
 @mixin media-query-large($width) {
-  @media screen and (min-width: $min-width-large) {
-    @content;
-  }
+    @media screen and (min-width: $min-width-large) {
+        @content;
+    }
 }
 
-
+/**
+ * Styles for small devices.
+ */
 @media screen and (max-width: $max-width-small) {
-  #player {
-    .ctrl {
+    #player {
+        width: 100%;
+
+        .play-pause { width: 15%; }
+        .gutter { width: 70%; left: 15%; }
+        .volume { width: 15%; }
+
+        .gutter {
+            .handler {
+                width: 20px;
+                margin-left: -10px;
+            }
+        }
     }
-  }
 }
 
+/**
+ * Styles for large devices.
+ */
 @media screen and (min-width: $min-width-large) {
-  #player {
-    width: 500px;
-    .controls-wrapper {
-      //position: relative;
-    }
-    .play-pause {
-      width: 50px;
-    }
-    .play-pause, .gutter{
-      display: inline-block;
-      white-space: nowrap;
-      height: 20px;
-      cursor: pointer;
-    }
-    .gutter {
-      width: 300px;
-      position: absolute;
-      background-color: #EABAEA;
-      left: 50px;
+    #player {
+        width: 70%;
+        margin: 0 auto;
 
-      .handler {
-        position: absolute;
-        background-color: #9F1100;
-        height: 20px;
-        width: 10px;
-        margin-left: -5px;
-      }
-    }
-    .time-remaining {
-      left: 370px;
-      position: absolute;
-    }
-  }
+        .play-pause { width: 10%; }
+        .gutter { width: 80%; left: 10%; }
+        .volume { width: 10%; }
 
-  #playlist li {
-      cursor: pointer;
-  }
+        .gutter {
+            .handler {
+                width: 10px;
+                margin-left: -5px;
+            }
+        }
+    }
+
 }

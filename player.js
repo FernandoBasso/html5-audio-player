@@ -183,12 +183,12 @@ var player = (function () {
      * TODO: Rename this function. It doesn't do what it says it does.
      * Starts the playing of the song in the <audio> tag.
      */
-    var playSong = function playSong() {
+    var updateHandlerPosition = function updateHandlerPosition() {
         //
         // `duration` is in seconds. Zero if no media data is available. Still, we only
         // invoke this function if a `loadeddata` event happens, so, we are probably safe here.
         //
-        var dur = _self.dnAudio.duration;
+        //var dur = _self.dnAudio.duration;
         var pos = undefined;
 
         //
@@ -197,7 +197,7 @@ var player = (function () {
         // offsetParent, which is the gutter.
         //
         _self.dnAudio.addEventListener('timeupdate', function () {
-            pos = _self.dnAudio.currentTime / dur * 100;
+            pos = _self.dnAudio.currentTime / _self.dnAudio.duration * 100;
 
             _self.dnHandler.style.left = pos + '%';
         });
@@ -275,9 +275,9 @@ var player = (function () {
             //
             // Divided by the width of the gutter itself!!!
             //
-            var gutterPercentage = newHandlerPos * 100 / _self.gutterWidth;
+            var handlerPercentageLeftOfGutter = newHandlerPos * 100 / _self.gutterWidth;
             var songDuration = _self.dnAudio.duration;
-            var newTimePosition = gutterPercentage * songDuration / 100;
+            var newTimePosition = handlerPercentageLeftOfGutter * songDuration / 100;
 
             _self.dnAudio.currentTime = newTimePosition;
             _self.dnAudio.play();
@@ -398,12 +398,12 @@ var player = (function () {
                 buildAudioTags(conf.songs, 0);
 
                 //
-                // DOING: Perhaps `loadeddata` should be listened to from inside playSong(),
+                // DOING: Perhaps `loadeddata` should be listened to from inside updateHandlerPosition(),
                 // and then handlePlayPause(), handleDragHandler() should go in there as well.
                 //
 
                 _self.dnAudio.addEventListener('loadeddata', function () {
-                    playSong();
+                    updateHandlerPosition();
 
                     //
                     // We start playing now. Set the text to pause.

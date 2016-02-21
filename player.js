@@ -20,7 +20,17 @@ var player = (function () {
         gutterWidth: undefined,
         gutterLeft: undefined,
         intervalId: undefined,
-        dnPlayList: []
+
+        /**
+         * @var {array} dnPlayList.
+         */
+        dnPlayList: [],
+
+        /**
+         * @var {object} config.
+         */
+        config: undefined,
+        currentSongIndex: undefined
     };
 
 
@@ -87,6 +97,8 @@ var player = (function () {
         sourceMp3.setAttribute('type', 'audio/ogg');
         sourceOgg.setAttribute('src', arrSongs[index].url + '.ogg');
         _self.dnAudio.appendChild(sourceOgg);
+
+        _self.currentSongIndex = parseInt(index, 10);
     };
 
     /**
@@ -332,7 +344,7 @@ var player = (function () {
     /**
      * Changes the song being played.
      */
-    function changeSong() {
+    function bindPlayListClick() {
 
         _self.dnPlayList.forEach(function (song) {
             song.addEventListener('click', function (evt) {
@@ -340,19 +352,56 @@ var player = (function () {
                 // DOING:
                 // Change path of the <source> tags and play from the beginning
                 //
-                var index = this.getAttribute('data-index');
-                byId('oggPath').setAttribute('src', conf.songs[index].url + '.ogg');
-                byId('mp3Path').setAttribute('src', conf.songs[index].url + '.mp3');
-                _self.dnAudio.load();
-                _self.dnAudio.addEventListener('loadeddata', function () {
-                    _self.dnAudio.play();
-                    togglePlayPauseUI(_self.dnAudio.paused);
-                }, false);
+                _self.currentSongIndex = parseInt(this.getAttribute('data-index'), 10);
+
+                changeSong(_self.currentSongIndex);
             });
         });
 
     }
 
+    function changeSong(index) {
+
+        _self.currentSongIndex = index;
+
+        byId('oggPath').setAttribute('src', conf.songs[index].url + '.ogg');
+        byId('mp3Path').setAttribute('src', conf.songs[index].url + '.mp3');
+        _self.dnAudio.load();
+        _self.dnAudio.addEventListener('loadeddata', function () {
+            _self.dnAudio.play();
+            togglePlayPauseUI(_self.dnAudio.paused);
+        }, false);
+    }
+
+    function nextSong() {
+
+        if (_self.config.loop === 'none') return;
+
+        if (_self.config.loop === 'one') {
+            changeSong(_self.currentSongIndex);
+            return;
+        }
+
+        var songIndex = (_self.currentSongIndex < _self.config.songs.length - 1)
+                ?  songIndex = _self.currentSongIndex + 1
+                : songIndex = 0;
+
+        changeSong(songIndex);
+    }
+
+    function bindEventHandlers() {
+        _self.dnAudio.addEventListener('ended', function () {
+            nextSong();
+        }, false);
+    }
+
+    function checkConfig(config) {
+
+        // 'none', 'one', 'all'. Default: 'none'.
+        config.loop = config.loop || 'none';
+
+        _self.config = config;
+    }
 
     //
     // Starts everything.
@@ -370,6 +419,9 @@ var player = (function () {
         // Cache the configuration in so that the entire main scope has access to it.
         //
         conf = config;
+
+        // Check for defaults and the like.
+        checkConfig(config);
 
         //
         // Load the core player html elements from a file to keep things more modular.
@@ -416,7 +468,10 @@ var player = (function () {
 
                 handleDragHandler();
 
-                changeSong();
+                bindPlayListClick();
+
+
+                bindEventHandlers();
             }
         });
     };

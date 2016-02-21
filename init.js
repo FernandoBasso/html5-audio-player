@@ -1,4 +1,8 @@
+/**
+ * The literal object is the `config` object.
+ */
 player.init({
+    loop: 'one', // 'none', 'one', 'all'. Default: 'none'.
     songs: [
         //{url: 'https://upload.wikimedia.org/wikipedia/en/4/45/ACDC_-_Back_In_Black-sample', name: 'Black in Black'},
         {url: 'songs/one', name: 'Amberdawn'},

@@ -245,6 +245,12 @@ var player = (function () {
             // is `paused`. We don't need to create those ourselves.
             //
 
+            if (isLastSong() && _self.dnAudio.ended) {
+                playSong(0);
+                togglePlayPauseUI();
+                return;
+            }
+
             if (_self.dnAudio.paused) {
                 _self.dnAudio.play();
                 startUpdateClock();
@@ -360,6 +366,10 @@ var player = (function () {
 
     }
 
+    function isLastSong() {
+        return _self.currentSongIndex === _self.config.songs.length - 1;
+    }
+
     function playSong(index) {
 
         _self.currentSongIndex = index;
@@ -384,22 +394,19 @@ var player = (function () {
 
         // If we are at the last song and `loop` is `none`, DO NOT start over playing at
         // the first item in the playlist.
-        if (_self.currentSongIndex === _self.config.songs.length - 1 && _self.config.loop === 'none') {
+        if (isLastSong() && _self.config.loop === 'none') {
             return;
         }
 
 
         // If we got to this point, either play the next song or start over again
         // from the first item in the playlist.
-        var songIndex = (_self.currentSongIndex < _self.config.songs.length - 1)
-                ?  songIndex = _self.currentSongIndex + 1
-                : songIndex = 0;
-
-        playSong(songIndex);
+        playSong(isLastSong() ? 0 : _self.currentSongIndex + 1);
     }
 
     function bindEventHandlers() {
         _self.dnAudio.addEventListener('ended', function () {
+            togglePlayPauseUI();
             nextSong();
         }, false);
     }

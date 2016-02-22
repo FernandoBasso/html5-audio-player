@@ -222,9 +222,9 @@ var player = (function () {
      *
      * @param {boolean} isPaused.
      */
-    var togglePlayPauseUI = function togglePlayPauseUI (isPaused) {
+    var togglePlayPauseUI = function togglePlayPauseUI () {
 
-        if (isPaused) {
+        if (_self.dnAudio.paused) {
             _self.dnPlayPause.classList.add('paused');
             _self.dnPlayPause.classList.remove('playing');
         }
@@ -253,7 +253,7 @@ var player = (function () {
                 _self.dnAudio.pause();
                 clearInterval(_self.intervalId);
             }
-            togglePlayPauseUI(_self.dnAudio.paused);
+            togglePlayPauseUI();
         });
     };
 
@@ -369,7 +369,7 @@ var player = (function () {
         _self.dnAudio.load();
         _self.dnAudio.addEventListener('loadeddata', function () {
             _self.dnAudio.play();
-            togglePlayPauseUI(_self.dnAudio.paused);
+            togglePlayPauseUI();
         }, false);
     }
 
@@ -469,8 +469,7 @@ var player = (function () {
                     //
                     // We start playing now. Set the text to pause.
                     //
-                    //_self.dnPlayPause.textContent = 'Play';
-                    togglePlayPauseUI(_self.dnAudio.paused);
+                    togglePlayPauseUI();
                 });
 
                 handlePlayPause();

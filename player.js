@@ -354,13 +354,13 @@ var player = (function () {
                 //
                 _self.currentSongIndex = parseInt(this.getAttribute('data-index'), 10);
 
-                changeSong(_self.currentSongIndex);
+                playSong(_self.currentSongIndex);
             });
         });
 
     }
 
-    function changeSong(index) {
+    function playSong(index) {
 
         _self.currentSongIndex = index;
 
@@ -375,18 +375,27 @@ var player = (function () {
 
     function nextSong() {
 
-        if (_self.config.loop === 'none') return;
-
+        // No mater if playlist should replay from start or not, if `loop` is `one`,
+        // keep playing the same song. `currentSongIndex` does not change.
         if (_self.config.loop === 'one') {
-            changeSong(_self.currentSongIndex);
+            playSong(_self.currentSongIndex);
             return;
         }
 
+        // If we are at the last song and `loop` is `none`, DO NOT start over playing at
+        // the first item in the playlist.
+        if (_self.currentSongIndex === _self.config.songs.length - 1 && _self.config.loop === 'none') {
+            return;
+        }
+
+
+        // If we got to this point, either play the next song or start over again
+        // from the first item in the playlist.
         var songIndex = (_self.currentSongIndex < _self.config.songs.length - 1)
                 ?  songIndex = _self.currentSongIndex + 1
                 : songIndex = 0;
 
-        changeSong(songIndex);
+        playSong(songIndex);
     }
 
     function bindEventHandlers() {

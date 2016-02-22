@@ -24,6 +24,11 @@ _bk/
 #
 tags
 
+#
+# init.js: initialization file that is local to each developer
+# or deoployment situation. Look at example-init.js.
+#
+init.js
 
 /nbproject/private/
 

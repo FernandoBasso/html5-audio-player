@@ -55,6 +55,12 @@ var player = (function () {
             var li = createNode('li');
             li.setAttribute('data-index', index);
             li.appendChild(createText(song.name));
+
+            // By default, the first song of the playlist is the “active” one.
+            if (index === 0) {
+                li.setAttribute('class', 'active');
+            }
+
             _self.dnPlayList.appendChild(li);
 
             //
@@ -352,7 +358,6 @@ var player = (function () {
     function bindPlayListClick() {
 
         [].slice.call(_self.dnPlayList.children).forEach(function (song) {
-            l(song);
             song.addEventListener('click', function (evt) {
                 //
                 // DOING:
@@ -370,12 +375,28 @@ var player = (function () {
         return _self.currentSongIndex === _self.config.songs.length - 1;
     }
 
+    function setActiveClass(index) {
+        var cur;
+        for (var i = 0; i < _self.dnPlayList.children.length; ++i) {
+            cur = _self.dnPlayList.children[i];
+
+            cur.classList.remove('active');
+
+            if (cur.getAttribute('data-index') == index) {
+                cur.classList.add('active');
+            }
+        }
+    }
+
     function playSong(index) {
 
         _self.currentSongIndex = index;
 
         byId('oggPath').setAttribute('src', conf.songs[index].url + '.ogg');
         byId('mp3Path').setAttribute('src', conf.songs[index].url + '.mp3');
+
+        setActiveClass(index);
+
         _self.dnAudio.load();
         _self.dnAudio.addEventListener('loadeddata', function () {
             _self.dnAudio.play();

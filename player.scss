@@ -14,10 +14,14 @@ $min-width-large: 960px;
 body {
     margin: 0;
 }
+#player-wrapper {
+  font-family: sans;
+}
 #player-wrapper ul {
     list-style: outside none none;
     margin: 0;
-    padding: 0;
+    padding: 0 10px;
+    display: none;
 }
 
 /**
@@ -64,6 +68,13 @@ body {
     }
     li {
         cursor: pointer;
+        padding: 10px;
+        border-bottom: 1px solid #333;
+    }
+    li:first-of-type {
+    }
+    li:hover, li.active {
+        background-color: #333;
     }
     .open + .playlist {
         margin-top: 0;

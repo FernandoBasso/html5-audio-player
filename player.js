@@ -17,19 +17,17 @@ var player = (function () {
         // TODO: dnTimeRemaining: undefined,
         dnHandler: undefined,
         dnGutter: undefined,
+        dnOpenClosePlaylist: undefined,
         gutterWidth: undefined,
         gutterLeft: undefined,
         intervalId: undefined,
-
-        /**
-         * @var {array} dnPlayList.
-         */
-        dnPlayList: [],
+        dnPlayList: undefined,
 
         /**
          * @var {object} config.
          */
         config: undefined,
+
         currentSongIndex: undefined
     };
 
@@ -52,24 +50,24 @@ var player = (function () {
      * @param {array} songList - the list of songs.
      */
     var buildPlaylist = function buildPlaylist(songList) {
-        var ul = createNode('ul');
+        _self.dnPlayList = createNode('ul');
         songList.forEach(function (song, index) {
             var li = createNode('li');
             li.setAttribute('data-index', index);
             li.appendChild(createText(song.name));
-            ul.appendChild(li);
+            _self.dnPlayList.appendChild(li);
 
             //
             // Store the list of songs beacuse we'll need it later to
             // change the playing song.
             //
-            _self.dnPlayList.push(li);
+            //_self.playList.push(li);
         });
         /**
          * TODO: Are we really sure we have an element with the ID of `playlist`?
          * It should since it is provided by the player files itself.
          */
-        byId('playlist').appendChild(ul);
+        byId('playlist').appendChild(_self.dnPlayList);
     };
 
     /**
@@ -111,6 +109,7 @@ var player = (function () {
         // TODO: _self.dnTimeRemaining = byId('time-remaining');
         _self.dnGutter = byId('gutter');
         _self.gutterLeft = pageX(_self.dnGutter);
+        _self.dnOpenClosePlaylist = byId('open-close-playlist');
     };
 
 
@@ -352,7 +351,8 @@ var player = (function () {
      */
     function bindPlayListClick() {
 
-        _self.dnPlayList.forEach(function (song) {
+        [].slice.call(_self.dnPlayList.children).forEach(function (song) {
+            l(song);
             song.addEventListener('click', function (evt) {
                 //
                 // DOING:
@@ -404,7 +404,23 @@ var player = (function () {
         playSong(isLastSong() ? 0 : _self.currentSongIndex + 1);
     }
 
+    function showHidePlaylist(evt) {
+        if (evt.target.classList.contains('closed')) {
+            evt.target.classList.remove('closed');
+            evt.target.classList.add('open');
+            _self.dnPlayList.style.display = 'block';
+        }
+        else {
+            l(evt.target.classList);
+            evt.target.classList.remove('open');
+            evt.target.classList.add('closed');
+            _self.dnPlayList.style.display = 'none';
+        }
+    }
+
     function bindEventHandlers() {
+        _self.dnOpenClosePlaylist.addEventListener('click', showHidePlaylist, false);
+
         _self.dnAudio.addEventListener('ended', function () {
             togglePlayPauseUI();
             nextSong();

@@ -14,7 +14,7 @@ $min-width-large: 960px;
 body {
     margin: 0;
 }
-ul {
+#player-wrapper ul {
     list-style: outside none none;
     margin: 0;
     padding: 0;
@@ -64,6 +64,28 @@ ul {
     }
     li {
         cursor: pointer;
+    }
+    .open + .playlist {
+        margin-top: 0;
+    }
+    .closed + .playlist {
+        margin-top: 36px;
+    }
+
+
+    #open-close-playlist {
+        position: absolute;
+        height: 36px;
+        width: 100%;
+        cursor: pointer;
+    }
+    #open-close-playlist.closed {
+        background: #444 url(images/arrow-down.svg) no-repeat center center;
+        top: 36px;
+    }
+    #open-close-playlist.open {
+        background: #444 url(images/arrow-up.svg) no-repeat center center;
+        bottom: -36px;
     }
 }
 
@@ -129,5 +151,4 @@ ul {
             }
         }
     }
-
 }

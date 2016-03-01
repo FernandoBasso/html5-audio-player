@@ -45,7 +45,6 @@ body {
         background: center/36px no-repeat url(images/play-circle-fill.svg);
     }
     .handler {
-        position: absolute;
     }
     .volume {
         right: 0;
@@ -54,14 +53,22 @@ body {
     .controls-wrapper {
         height: 36px;
         .handler {
-            height: inherit;
+            height: 16px;
+            width: 16px;
+            margin-left: -8px;
         }
     }
     .gutter {
-        background-color: #EABAEA;
+        background-color: #b1b1b1;
+        height: 4px;
+        top: 16px;
+        border-radius: 3px;
     }
     .handler {
-        background-color: #9F1100;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.65);
+        border-radius: 8px;
+        top: -6px;
     }
     .playlist {
         background-color: #444;
@@ -125,10 +132,6 @@ body {
         .volume { width: 20%; }
 
         .gutter {
-            .handler {
-                width: 20px;
-                margin-left: -10px;
-            }
         }
     }
 }
@@ -157,8 +160,6 @@ body {
 
         .gutter {
             .handler {
-                width: 10px;
-                margin-left: -5px;
             }
         }
     }

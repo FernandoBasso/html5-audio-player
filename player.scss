@@ -59,16 +59,24 @@ body {
         }
     }
     .gutter {
-        background-color: #b1b1b1;
-        height: 4px;
-        top: 16px;
+        background-color: #333;
+        height: 14px;
+        top: 11px;
         border-radius: 3px;
     }
     .handler {
         position: absolute;
         background-color: rgba(0, 0, 0, 0.65);
         border-radius: 8px;
-        top: -6px;
+        top: -1px;
+    }
+    .fill {
+        height: 4px;
+        background-color: #555;
+        width: 100%;
+        display: block;
+        margin-top: 5px;
+        border-radius: 2px;
     }
     .playlist {
         background-color: #444;
@@ -80,8 +88,13 @@ body {
     }
     li:first-of-type {
     }
+    li {
+        background: #444 8px center/0px url(images/music-note1.svg) no-repeat;
+        transition: all 0.2s linear 0s;
+    }
     li:hover, li.active {
-        background-color: #333;
+        background: #333 8px center/20px url(images/music-note.svg) no-repeat;
+        padding-left: 30px;
     }
     .open + .playlist {
         margin-top: 0;

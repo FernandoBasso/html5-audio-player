@@ -22,13 +22,20 @@ var player = (function () {
         gutterLeft: undefined,
         intervalId: undefined,
         dnPlayList: undefined,
+        dnVolumeBtn: undefined,
+        dnVGutterWrap: undefined,
 
         /**
          * @var {object} config.
          */
         config: undefined,
 
-        currentSongIndex: undefined
+        currentSongIndex: undefined,
+
+
+        dnVGutter: undefined,
+        dnVHandler: undefined
+
     };
 
 
@@ -116,6 +123,11 @@ var player = (function () {
         _self.dnGutter = byId('gutter');
         _self.gutterLeft = pageX(_self.dnGutter);
         _self.dnOpenClosePlaylist = byId('open-close-playlist');
+
+        _self.dnVGutterWrap = byId('v-gutter-wrap');
+        _self.dnVolumeBtn = byId('volume');
+        _self.dnVHandler = byId('v-handler');
+        _self.dnVGutter = byId('v-gutter');
     };
 
 
@@ -439,6 +451,17 @@ var player = (function () {
         }
     }
 
+    var toggleVolumeGutterUI = function toggleVolumeGutterUI (evt) {
+        if (this.getAttribute('data-visible') === 'hidden') {
+            this.setAttribute('data-visible', 'shown');
+            _self.dnVGutterWrap.style.display = 'block';
+        }
+        else {
+            this.setAttribute('data-visible', 'hidden');
+            _self.dnVGutterWrap.style.display = 'none';
+        }
+    };
+
     function bindEventHandlers() {
         _self.dnOpenClosePlaylist.addEventListener('click', showHidePlaylist, false);
 
@@ -446,6 +469,69 @@ var player = (function () {
             togglePlayPauseUI();
             nextSong();
         }, false);
+
+        _self.dnVolumeBtn.addEventListener('click', toggleVolumeGutterUI, false);
+    }
+
+    var updateVolumeUI = function updateVolumeUI (vol) {
+        var cssClass;
+        if (vol < 0.1) {
+            cssClass = 'vol-off';
+        }
+        else if (vol < 0.30) {
+            cssClass = 'vol-low';
+        }
+        else if (vol < 0.70) {
+            cssClass = 'vol-half';
+        }
+        else {
+            cssClass = 'vol-up';
+        }
+
+        _self.dnVolumeBtn.classList.remove('vol-up', 'vol-half', 'vol-low', 'vol-off');
+        _self.dnVolumeBtn.classList.add(cssClass);
+    };
+
+    var handleVolume = function handleVolume () {
+        var bVolDragging,
+            volGutterLeft,
+            volGutterWidth,
+            newVol;
+
+        function updateVolHandler(evt) {
+
+            var newHandlerPos;
+
+            // If we are dragging, and we are still withing left and right boundaries.
+            if (bVolDragging
+                    && evt.pageX >= volGutterLeft
+                    && evt.pageX <= (volGutterLeft + volGutterWidth)) {
+
+                // Update de handler's position on  the page.
+                newHandlerPos = evt.pageX - volGutterLeft;
+                _self.dnVHandler.style.left = newHandlerPos + 'px';
+
+                newVol = (newHandlerPos / volGutterWidth);
+                _self.dnAudio.volume = newVol;
+
+                updateVolumeUI(newVol);
+            }
+        }
+
+        _self.dnVGutter.addEventListener('mousedown', function (evt) {
+            volGutterLeft = pageX(this);
+            volGutterWidth = this.offsetWidth;
+            bVolDragging = true;
+            updateVolHandler(evt);
+        });
+
+        document.addEventListener('mousemove', function (evt) {
+            updateVolHandler(evt);
+        });
+
+        document.addEventListener('mouseup', function (evt) {
+            bVolDragging = false;
+        });
     }
 
     function checkConfig(config) {
@@ -524,6 +610,8 @@ var player = (function () {
 
 
                 bindEventHandlers();
+
+                handleVolume();
             }
         });
     };

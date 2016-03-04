@@ -21,7 +21,11 @@ Lots of features and improvements shall be implemented as time permits.
 
 ## Screenshots
 
+Playlist open:
+
 ![Playlist Open](previews/playlist-open.png)
+
+Playlist closed:
 
 ![Playlist Closed](previews/playlist-closed.png)
 

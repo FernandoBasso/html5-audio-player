@@ -4,6 +4,27 @@ A pure HTML5 and JavaScript audio player.
 
 NOTE: Many features in the devel branch may not be in master yet.
 
+## Features
+
+These are the features that have been implemented so far:
+
+- playlist
+- expand/collapse playlist
+- play/pause
+- peek in time
+- volume up/down
+- responsive design
+- playlist loop none, one, all (via config, not UI)
+
+Lots of features and improvements shall be implemented as time permits.
+
+
+## Screenshots
+
+![Playlist Open](previews/playlist-open.png)
+
+![Playlist Closed](previews/playlist-closed.png)
+
 
 ## Getting Started ##
 

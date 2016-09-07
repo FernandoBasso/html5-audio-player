@@ -498,6 +498,16 @@ var player = (function () {
             volGutterWidth,
             newVol;
 
+        _self.dnAudio.volume = _self.config.volume;
+        updateVolumeUI(newVol);
+
+        // To get the width of the volume gutter we need to show the gutter
+        // wrapper, otherwise the width is zero.
+        _self.dnVGutterWrap.style.display = 'block';
+        var gutterWidth = _self.dnVGutter.offsetWidth;
+        _self.dnVGutterWrap.style.display = 'none';
+        _self.dnVHandler.style.left = _self.config.volume * gutterWidth + 'px';
+
         function updateVolHandler(evt) {
 
             var newHandlerPos;
@@ -538,6 +548,9 @@ var player = (function () {
 
         // 'none', 'one', 'all'. Default: 'none'.
         config.loop = config.loop || 'none';
+
+        config.volume = config.volume || 80;
+        config.volume = config.volume / 100;
 
         _self.config = config;
     }

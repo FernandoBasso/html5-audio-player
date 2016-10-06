@@ -3,6 +3,8 @@
  */
 player.init({
     loop: 'all', // 'none', 'one', 'all'. Default: 'none'.
+    volume: 50, // 1 to 100.
+    autoplay: false,
     songs: [
         //{url: 'https://upload.wikimedia.org/wikipedia/en/4/45/ACDC_-_Back_In_Black-sample', name: 'Black in Black'},
         {url: 'songs/one', name: 'Amberdawn'},

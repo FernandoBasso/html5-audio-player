@@ -105,9 +105,15 @@ var player = (function () {
         //
         var sourceOgg = createNode('source');
         sourceOgg.setAttribute('id', 'oggPath');
-        sourceMp3.setAttribute('type', 'audio/ogg');
+        sourceOgg.setAttribute('type', 'audio/ogg');
         sourceOgg.setAttribute('src', arrSongs[index].url + '.ogg');
         _self.dnAudio.appendChild(sourceOgg);
+
+        // The audio tag iteself is built only once. When the current song
+        // changes, only its audio url changes, but we do not recreate the audio
+        // tag. That means autoplay only works on page load and it doesn't interfere
+        // with changing songs through the playlist later.
+        _self.dnAudio.autoplay = _self.config.autoplay;
 
         _self.currentSongIndex = parseInt(index, 10);
     };
@@ -551,6 +557,7 @@ var player = (function () {
 
         config.volume = config.volume || 80;
         config.volume = config.volume / 100;
+        config.autoplay = config.autoplay || false;
 
         _self.config = config;
     }
